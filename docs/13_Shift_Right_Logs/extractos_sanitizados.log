@@ -1,0 +1,26 @@
+# Escenario 1
+{"timestamp":"2026-11-18T20:10:50.311Z","level":"INFO","context":"GruposService","event":"GROUP_CREATED","message":"Grupo creado","metadata":{"grupoId":"GRUPO-7","actorId":"PROFESOR-1"}}
+{"timestamp":"2026-11-18T20:10:52.666Z","level":"INFO","context":"GruposService","event":"STUDENTS_ENROLLED","message":"Estudiantes matriculados","metadata":{"grupoId":"GRUPO-7","cantidad":1,"actorId":"PROFESOR-1"}}
+{"timestamp":"2026-11-18T20:10:53.895Z","level":"INFO","context":"QuicesService","event":"QUIZ_CREATED","message":"Quiz creado","metadata":{"quizId":"QUIZ-7","preguntas":2,"actorId":"PROFESOR-1"}}
+{"timestamp":"2026-11-18T20:10:54.899Z","level":"INFO","context":"QuicesService","event":"QUIZ_ASSIGNED","message":"Quiz asignado a grupos","metadata":{"quizId":"QUIZ-7","grupos":1,"actorId":"PROFESOR-1"}}
+{"timestamp":"2026-11-18T20:10:55.810Z","level":"INFO","context":"AuthService","event":"LOGIN_OK","message":"Inicio de sesión correcto","metadata":{"usuarioId":"ESTUDIANTE-2","rol":"ESTUDIANTE"}}
+{"timestamp":"2026-11-18T20:10:59.118Z","level":"INFO","context":"QuicesService","event":"ATTEMPT_STARTED","message":"Estudiante inició un quiz","metadata":{"quizId":"QUIZ-7","intentoId":"INTENTO-7","usuarioId":"ESTUDIANTE-2"}}
+{"timestamp":"2026-11-18T20:11:02.606Z","level":"INFO","context":"QuicesService","event":"ATTEMPT_FINISHED","message":"Quiz finalizado y calificado","metadata":{"intentoId":"INTENTO-7","usuarioId":"ESTUDIANTE-2","calificacion":50,"tiempoTotalSeg":2}}
+
+# Escenario 2
+{"timestamp":"2026-11-18T20:10:20.129Z","level":"WARN","context":"AuthService","event":"LOGIN_FAILED","message":"Inicio de sesión fallido","metadata":{"correo":"p***@quizstar.test"}}
+{"timestamp":"2026-11-18T20:10:20.133Z","level":"WARN","context":"HTTP","event":"REQUEST_REJECTED","message":"Petición rechazada","metadata":{"metodo":"POST","ruta":"/auth/login","estado":401}}
+
+# Escenario 3
+{"timestamp":"2026-11-18T19:37:35.936Z","level":"INFO","context":"AuthService","event":"LOGIN_OK","message":"Inicio de sesión correcto","metadata":{"usuarioId":"ESTUDIANTE-1","rol":"ESTUDIANTE"}}
+{"timestamp":"2026-11-18T19:37:36.037Z","level":"WARN","context":"HTTP","event":"REQUEST_REJECTED","message":"Petición rechazada","metadata":{"metodo":"POST","ruta":"/usuarios","estado":403,"usuarioId":"ESTUDIANTE-1"}}
+
+# Escenario 4
+{"timestamp":"2026-11-18T19:37:40.892Z","level":"WARN","context":"HTTP","event":"VALIDATION_REJECTED","message":"Datos inválidos rechazados","metadata":{"metodo":"POST","ruta":"/quices","estado":400,"usuarioId":"PROFESOR-1","detalle":{"message":["preguntas.0.Cada pregunta debe tener 4 opciones"],"error":"Bad Request","statusCode":400}}}
+{"timestamp":"2026-11-18T19:37:49.685Z","level":"WARN","context":"HTTP","event":"VALIDATION_REJECTED","message":"Datos inválidos rechazados","metadata":{"metodo":"POST","ruta":"/quices/QUIZ-2/responder","estado":400,"usuarioId":"ESTUDIANTE-1","detalle":{"message":["opcion must not be greater than 3"],"error":"Bad Request","statusCode":400}}}
+
+# Escenario 5
+{"timestamp":"2026-11-18T19:37:37.907Z","level":"WARN","context":"HTTP","event":"REQUEST_REJECTED","message":"Petición rechazada","metadata":{"metodo":"POST","ruta":"/grupos","estado":409,"usuarioId":"PROFESOR-1"}}
+{"timestamp":"2026-11-18T19:37:40.766Z","level":"WARN","context":"HTTP","event":"REQUEST_REJECTED","message":"Petición rechazada","metadata":{"metodo":"POST","ruta":"/grupos/GRUPO-2/matriculas","estado":409,"usuarioId":"PROFESOR-1"}}
+{"timestamp":"2026-11-18T19:37:52.242Z","level":"WARN","context":"HTTP","event":"REQUEST_REJECTED","message":"Petición rechazada","metadata":{"metodo":"POST","ruta":"/quices/QUIZ-2/iniciar","estado":409,"usuarioId":"ESTUDIANTE-1"}}
+

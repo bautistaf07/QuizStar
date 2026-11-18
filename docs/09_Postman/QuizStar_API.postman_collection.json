@@ -1,0 +1,1040 @@
+{
+  "info": {
+    "name": "QuizStar API - Pruebas de calidad",
+    "description": "21 solicitudes encadenadas con verificaciones post-respuesta. Ejecutar en orden con el Collection Runner y el entorno QuizStar Local. Las verificaciones marcadas [Dominio] comprueban reglas del negocio (roles, calificación, no repetir quiz, no filtrar la respuesta correcta).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Login profesor correcto (SWR-AUTH-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "pm.test(\"Devuelve un accessToken de texto\", () => pm.expect(j.accessToken).to.be.a(\"string\").and.not.empty);",
+              "pm.test(\"[Dominio] El rol del usuario es PROFESOR\", () => pm.expect(j.usuario.rol).to.eql(\"PROFESOR\"));",
+              "pm.test(\"[Dominio] No expone el hash de la contraseña\", () => pm.expect(JSON.stringify(j)).to.not.include(\"passwordHash\"));",
+              "pm.environment.set(\"tokenProfe\", j.accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"{{profeCorreo}}\",\n  \"password\": \"{{profePassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "02 Login con contraseña incorrecta (SWR-AUTH-002)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 401\", () => pm.response.to.have.status(401));",
+              "pm.test(\"[Dominio] Mensaje genérico, sin revelar si el correo existe\", () => pm.expect(pm.response.json().message).to.eql(\"Correo o contraseña incorrectos\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"{{profeCorreo}}\",\n  \"password\": \"ClaveEquivocada999\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "03 Perfil sin token (SWR-AUTH-007)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 401 sin token\", () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        },
+        "description": ""
+      }
+    },
+    {
+      "name": "04 Login estudiante correcto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "pm.test(\"[Dominio] El rol del usuario es ESTUDIANTE\", () => pm.expect(j.usuario.rol).to.eql(\"ESTUDIANTE\"));",
+              "pm.environment.set(\"tokenEst\", j.accessToken);",
+              "pm.environment.set(\"estudianteId\", j.usuario.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"{{estCorreo}}\",\n  \"password\": \"{{estPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "05 Estudiante no puede crear usuarios (SWR-USR-006)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"[Dominio] Responde 403: el rol ESTUDIANTE no tiene permiso\", () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "usuarios"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Intruso\",\n  \"correo\": \"intruso@quizstar.test\",\n  \"password\": \"Clave12345\",\n  \"rol\": \"ESTUDIANTE\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "06 Profesor lista usuarios: solo estudiantes",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+              "const lista = pm.response.json();",
+              "pm.test(\"Devuelve una lista\", () => pm.expect(lista).to.be.an(\"array\"));",
+              "pm.test(\"[Dominio] El profesor solo ve usuarios con rol ESTUDIANTE\", () => pm.expect(lista.every(u => u.rol === \"ESTUDIANTE\")).to.be.true);",
+              "pm.test(\"[Dominio] Ningún usuario trae passwordHash\", () => pm.expect(JSON.stringify(lista)).to.not.include(\"passwordHash\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "usuarios"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "07 Crear grupo (SWR-CUR-001)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.environment.set(\"grupoNombre\", \"Grupo API \" + Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "const g = pm.response.json();",
+              "pm.test(\"[Dominio] El grupo creado tiene el nombre enviado\", () => pm.expect(g.nombre).to.eql(pm.environment.get(\"grupoNombre\")));",
+              "pm.environment.set(\"grupoId\", g.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/grupos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "grupos"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"{{grupoNombre}}\",\n  \"grado\": \"Semestre 6\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "08 Grupo con nombre repetido (SWR-CUR-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));",
+              "pm.test(\"[Dominio] Mensaje: ya existe un grupo con ese nombre\", () => pm.expect(pm.response.json().message).to.eql(\"Ya existe un grupo con ese nombre\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/grupos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "grupos"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"{{grupoNombre}}\",\n  \"grado\": \"Semestre 6\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "09 Matricular estudiante (SWR-CUR-003)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "pm.test(\"[Dominio] Se matriculó exactamente 1 estudiante\", () => pm.expect(pm.response.json().matriculados).to.eql(1));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/grupos/{{grupoId}}/matriculas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "grupos",
+            "{{grupoId}}",
+            "matriculas"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estudianteIds\": [\n    \"{{estudianteId}}\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "10 Matricular de nuevo al mismo estudiante (SWR-CUR-003)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"[Dominio] Responde 409: no se matricula dos veces\", () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/grupos/{{grupoId}}/matriculas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "grupos",
+            "{{grupoId}}",
+            "matriculas"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estudianteIds\": [\n    \"{{estudianteId}}\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "11 Crear quiz con 3 opciones (SWR-QUIZ-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"[Dominio] El mensaje exige 4 opciones por pregunta\", () => pm.expect(JSON.stringify(pm.response.json().message)).to.include(\"4 opciones\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/quices",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Quiz inválido\",\n  \"tema\": \"Pruebas\",\n  \"tiempoLimiteMin\": 5,\n  \"preguntas\": [\n    {\n      \"enunciado\": \"¿Pregunta con 3 opciones?\",\n      \"opciones\": [\n        \"A\",\n        \"B\",\n        \"C\"\n      ],\n      \"opcionCorrecta\": 0\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "12 Crear quiz válido (SWR-QUIZ-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "const q = pm.response.json();",
+              "pm.test(\"[Dominio] El quiz quedó con las 2 preguntas enviadas\", () => pm.expect(q._count.preguntas).to.eql(2));",
+              "pm.test(\"[Dominio] El tiempo límite guardado es 5 minutos\", () => pm.expect(q.tiempoLimiteMin).to.eql(5));",
+              "pm.environment.set(\"quizId\", q.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/quices",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Quiz de API\",\n  \"tema\": \"Pruebas automáticas\",\n  \"tiempoLimiteMin\": 5,\n  \"preguntas\": [\n    {\n      \"enunciado\": \"¿Cuánto es 2 + 2?\",\n      \"opciones\": [\n        \"3\",\n        \"4\",\n        \"5\",\n        \"6\"\n      ],\n      \"opcionCorrecta\": 1\n    },\n    {\n      \"enunciado\": \"¿Capital de Colombia?\",\n      \"opciones\": [\n        \"Bogotá\",\n        \"Lima\",\n        \"Quito\",\n        \"Caracas\"\n      ],\n      \"opcionCorrecta\": 0\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "13 Asignar quiz al grupo (SWR-ASG-002)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "const r = pm.response.json();",
+              "pm.test(\"[Dominio] La asignación corresponde al quiz y al grupo\", () => {",
+              "  pm.expect(r.quizId).to.eql(pm.environment.get(\"quizId\"));",
+              "  pm.expect(r.grupoIds).to.include(pm.environment.get(\"grupoId\"));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/asignaciones",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "asignaciones"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"grupoIds\": [\n    \"{{grupoId}}\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "14 Estudiante ve su quiz pendiente (SWR-ASG-002)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+              "const lista = pm.response.json();",
+              "const mio = lista.find(q => q.id === pm.environment.get(\"quizId\"));",
+              "pm.test(\"[Dominio] El quiz asignado aparece en la lista del estudiante\", () => pm.expect(mio).to.not.be.undefined);",
+              "pm.test(\"[Dominio] Su estado inicial es SIN_INICIAR\", () => pm.expect(mio.estadoIntento).to.eql(\"SIN_INICIAR\"));",
+              "pm.test(\"[Dominio] La lista no revela la opción correcta\", () => pm.expect(JSON.stringify(lista)).to.not.include(\"opcionCorrecta\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/quices",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "15 Estudiante inicia el quiz (SWR-PRES-002)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "const j = pm.response.json();",
+              "pm.test(\"[Dominio] Entrega las 2 preguntas con 4 opciones cada una\", () => {",
+              "  pm.expect(j.preguntas).to.have.lengthOf(2);",
+              "  pm.expect(j.preguntas.every(p => p.opciones.length === 4)).to.be.true;",
+              "});",
+              "pm.test(\"[Dominio] El tiempo restante no supera el límite de 300 s\", () => pm.expect(j.restanteSeg).to.be.within(1, 300));",
+              "pm.test(\"[Dominio] No filtra la opción correcta al estudiante\", () => pm.expect(JSON.stringify(j)).to.not.include(\"opcionCorrecta\"));",
+              "pm.environment.set(\"preguntaId1\", j.preguntas[0].id);",
+              "pm.environment.set(\"preguntaId2\", j.preguntas[1].id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/iniciar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "iniciar"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "16 Responder una pregunta (SWR-CAL-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "pm.test(\"Confirma que guardó la respuesta\", () => pm.expect(pm.response.json().ok).to.be.true);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/responder",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "responder"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"preguntaId\": \"{{preguntaId1}}\",\n  \"opcion\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "17 Responder con opción fuera de rango (SWR-CAL-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"[Dominio] Responde 400: la opción debe estar entre 0 y 3\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/responder",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "responder"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"preguntaId\": \"{{preguntaId2}}\",\n  \"opcion\": 9\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "18 Finalizar y calificar (SWR-CAL-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+              "const r = pm.response.json();",
+              "pm.test(\"[Dominio] El estado queda FINALIZADO\", () => pm.expect(r.estado).to.eql(\"FINALIZADO\"));",
+              "pm.test(\"[Dominio] El total de preguntas es 2\", () => pm.expect(r.total).to.eql(2));",
+              "pm.test(\"[Dominio] La calificación está entre 0 y 100\", () => pm.expect(r.calificacion).to.be.within(0, 100));",
+              "pm.test(\"[Dominio] La nota coincide con correctas/total x 100\", () => pm.expect(r.calificacion).to.eql(Math.round((r.correctas / r.total) * 1000) / 10));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/finalizar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "finalizar"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "19 No se puede presentar dos veces (SWR-PRES-002)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"[Dominio] Responde 409\", () => pm.response.to.have.status(409));",
+              "pm.test(\"[Dominio] Mensaje: Ya presentaste este quiz\", () => pm.expect(pm.response.json().message).to.eql(\"Ya presentaste este quiz\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/iniciar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "iniciar"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenEst}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "20 Profesor consulta resultados (SWR-CAL-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+              "const filas = pm.response.json();",
+              "const fila = filas.find(f => f.estudianteId === pm.environment.get(\"estudianteId\"));",
+              "pm.test(\"[Dominio] El estudiante aparece en los resultados del quiz\", () => pm.expect(fila).to.not.be.undefined);",
+              "pm.test(\"[Dominio] Su intento figura como FINALIZADO\", () => pm.expect(fila.estado).to.eql(\"FINALIZADO\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/quices/{{quizId}}/resultados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "quices",
+            "{{quizId}}",
+            "resultados"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "21 Ranking del grupo (SWR-RANK-001)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+              "const r = pm.response.json();",
+              "pm.test(\"[Dominio] El ranking pertenece al grupo consultado\", () => pm.expect(r.grupo.id).to.eql(pm.environment.get(\"grupoId\")));",
+              "pm.test(\"[Dominio] La primera posición es 1\", () => pm.expect(r.ranking[0].posicion).to.eql(1));",
+              "pm.test(\"[Dominio] Las posiciones nunca bajan de 1 ni se saltan al revés\", () => pm.expect(r.ranking.every((f, i) => i === 0 || f.posicion >= r.ranking[i-1].posicion)).to.be.true);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/ranking/grupos/{{grupoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ranking",
+            "grupos",
+            "{{grupoId}}"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenProfe}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
