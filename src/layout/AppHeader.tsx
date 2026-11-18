@@ -91,19 +91,19 @@ const AppHeader: React.FC = () => {
           </button>
 
           <Link href="/" className="xl:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="/images/logo/logo.svg"
-              alt="Logo"
+           <Image
+            width={140}
+            height={32}
+            className="h-auto w-[140px] dark:hidden"
+            src="/images/logo/quizstar-logo-ancho-claro.svg"
+            alt="QuizStar"
             />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="/images/logo/logo-dark.svg"
-              alt="Logo"
+           <Image
+            width={140}
+            height={32}
+            className="hidden h-auto w-[140px] dark:block"
+            src="/images/logo/quizstar-logo-ancho-oscuro.svg"
+            alt="QuizStar"
             />
           </Link>
 

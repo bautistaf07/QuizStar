@@ -8,18 +8,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
   PageIcon,
   PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
+
+
+
 
 type NavItem = {
   key: string;
@@ -37,70 +37,16 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    key: "dashboard",
-    subItems: [{ key: "ecommerceHome", path: "/" }],
-  },
-  {
-    icon: <CalenderIcon />,
-    key: "calendar",
-    path: "/calendar",
-  },
-  {
-    icon: <UserCircleIcon />,
-    key: "userProfile",
-    path: "/profile",
-  },
-  {
-    key: "forms",
-    icon: <ListIcon />,
-    subItems: [{ key: "formElements", path: "/form-elements", pro: false }],
-  },
-  {
-    key: "tables",
-    icon: <TableIcon />,
-    subItems: [{ key: "basicTables", path: "/basic-tables", pro: false }],
-  },
-  {
-    key: "pages",
-    icon: <PageIcon />,
-    subItems: [
-      { key: "blankPage", path: "/blank" },
-      { key: "error404", path: "/error-404" },
-    ],
-  },
+  { icon: <GridIcon />, key: "dashboard", path: "/" },
+  { icon: <BoxCubeIcon />, key: "quizzes", path: "/quices" },
+  { icon: <ListIcon />, key: "classes", path: "/grupos" },
+  { icon: <UserCircleIcon />, key: "users", path: "/usuarios" },
+  { icon: <PageIcon />, key: "ranking", path: "/ranking" },
 ];
 
 const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    key: "charts",
-    subItems: [
-      { key: "lineChart", path: "/line-chart", pro: false },
-      { key: "barChart", path: "/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    key: "uiElements",
-    subItems: [
-      { key: "alerts", path: "/alerts" },
-      { key: "avatar", path: "/avatars" },
-      { key: "badge", path: "/badge" },
-      { key: "buttons", path: "/buttons" },
-      { key: "images", path: "/images" },
-      { key: "videos", path: "/videos" },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    key: "authentication",
-    subItems: [
-      { key: "signIn", path: "/signin", pro: false },
-      { key: "signUp", path: "/signup", pro: false },
-    ],
-  },
+  { icon: <TableIcon />, key: "results", path: "/resultados" },
+  { icon: <PieChartIcon />, key: "reports", path: "/reportes" },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -344,34 +290,32 @@ const AppSidebar: React.FC = () => {
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <Image
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-                priority
-                style={{ width: "auto", height: "auto" }}
+            <Image
+              className="dark:hidden h-10 w-[175px] object-contain"
+              src="/images/logo/quizstar-logo-ancho-claro.svg"
+              alt="QuizStar"
+              width={175}
+              height={40}
+              priority
               />
               <Image
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-                priority
-                style={{ width: "auto", height: "auto" }}
+              className="hidden dark:block h-10 w-[175px] object-contain"
+              src="/images/logo/quizstar-logo-ancho-oscuro.svg"
+              alt="QuizStar"
+              width={175}
+              height={40}
+              priority
               />
             </>
           ) : (
             <Image
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
+              className="h-8 w-8 object-contain"
+              src="/images/logo/quizstar-icono-oscuro.svg"
+              alt="QuizStar"
               width={32}
               height={32}
               priority
-              style={{ width: "auto", height: "auto" }}
-            />
+              />
           )}
         </Link>
       </div>
@@ -413,7 +357,6 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
     </aside>
   );

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 216" width="624" height="648" role="img" aria-label="Icono de QuizStar">
+  <title>Icono de QuizStar</title>
+  <path d="M56 8 H144 A48 48 0 0 1 192 56 V128 A48 48 0 0 1 144 176 H104 L50 206 L62 176 H56 A48 48 0 0 1 8 128 V56 A48 48 0 0 1 56 8 Z" fill="#4338D8"/>
+  <circle cx="188" cy="22" r="13" fill="#FF5A5F"/>
+  <circle cx="168" cy="198" r="9" fill="#2BC0A1"/>
+  <g transform="rotate(-10 100 94)">
+    <polygon points="100,38 115.28,72.97 153.26,76.7 124.73,102.03 132.92,139.3 100,120 67.08,139.3 75.27,102.03 46.74,76.7 84.72,72.97" fill="#FFC933" stroke="#FFC933" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M91 86 C91 76 109 76 109 86 C109 95 100 95 100 103" fill="none" stroke="#1B1740" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="100" cy="112" r="4.5" fill="#1B1740"/>
+  </g>
+</svg>

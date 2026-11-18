@@ -10,10 +10,10 @@
     "seeAll": "See all"
   },
   "sidebar": {
-    "groups": {
-      "menu": "Menu",
-      "support": "Support",
-      "others": "Others"
+  "groups": {
+  "menu": "Principal",
+  "support": "Soporte",
+  "others": "Gestión"
     },
     "badges": {
       "new": "new",
@@ -21,6 +21,12 @@
     },
     "items": {
       "dashboard": "Dashboard",
+      "quizzes": "Quices",
+      "classes": "Grupos",
+      "users": "Usuarios",
+      "ranking": "Ranking",
+      "results": "Resultados",
+      "reports": "Reportes",
       "ecommerceHome": "Ecommerce",
       "analytics": "Analytics",
       "marketing": "Marketing",
