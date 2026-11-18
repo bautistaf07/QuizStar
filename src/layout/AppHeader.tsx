@@ -1,7 +1,6 @@
 "use client";
 
 import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
-import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
 import { Link } from "@/i18n/navigation";
@@ -90,7 +89,7 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link href="/" className="xl:hidden">
+          <Link href="/panel" className="xl:hidden">
            <Image
             width={140}
             height={32}
@@ -171,8 +170,6 @@ const AppHeader: React.FC = () => {
             {/* <!-- Dark Mode Toggler --> */}
             <ThemeToggleButton />
             {/* <!-- Dark Mode Toggler --> */}
-
-            <NotificationDropdown />
 
             {/* <!-- Notification Menu Area --> */}
           </div>

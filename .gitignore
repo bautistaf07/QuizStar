@@ -35,3 +35,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.env
+.env.*
+backend/.env
+/playwright-report/
+/test-results/
+
+# playwright
+/playwright-report/
+/test-results/
+
+# secretos
+.env
+.env.*
+!.env.example
+backend/.env

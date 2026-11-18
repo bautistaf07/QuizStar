@@ -5,6 +5,7 @@ import { cn } from "@/utils";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
@@ -37,13 +38,21 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { icon: <GridIcon />, key: "dashboard", path: "/" },
+  { icon: <GridIcon />, key: "dashboard", path: "/panel" },
   { icon: <BoxCubeIcon />, key: "quizzes", path: "/quices" },
   { icon: <ListIcon />, key: "classes", path: "/grupos" },
   { icon: <UserCircleIcon />, key: "users", path: "/usuarios" },
   { icon: <PageIcon />, key: "ranking", path: "/ranking" },
 ];
 
+// Menú por rol (SWR-AUTH-007): cada usuario ve solo lo que puede usar.
+const RUTAS_POR_ROL: Record<string, string[]> = {
+  ADMIN: ["/panel", "/usuarios", "/grupos"],
+  PROFESOR: ["/panel", "/quices", "/grupos", "/ranking"],
+  ESTUDIANTE: ["/panel", "/quices", "/ranking"],
+};
+
+// Resultados y Reportes quedan fuera del MVP (ver 01_Alcance_y_Trazabilidad.xlsx).
 const othersItems: NavItem[] = [
   { icon: <TableIcon />, key: "results", path: "/resultados" },
   { icon: <PieChartIcon />, key: "reports", path: "/reportes" },
@@ -53,6 +62,11 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
   const t = useTranslations("sidebar");
+  const { usuario } = useAuth();
+  const rutasPermitidas = RUTAS_POR_ROL[usuario?.rol ?? "ESTUDIANTE"];
+  const itemsVisibles = navItems.filter(
+    (item) => item.path && rutasPermitidas.includes(item.path),
+  );
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -287,7 +301,7 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "xl:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
+        <Link href="/panel">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
             <Image
@@ -336,10 +350,10 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
+              {renderMenuItems(itemsVisibles, "main")}
             </div>
 
-            <div>
+            <div className="hidden">
               <h2
                 className={`mb-4 flex text-xs leading-5 text-gray-400 uppercase ${
                   !isExpanded && !isHovered

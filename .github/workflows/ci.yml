@@ -1,0 +1,56 @@
+name: CI QuizStar
+
+# Se ejecuta en cada push y en cada Pull Request hacia main.
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (NestJS) - pruebas unitarias y Quality Gate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npx prisma generate
+      # Quality Gate basico: si la cobertura de las reglas de negocio baja del 90 %, el job falla.
+      - name: Pruebas unitarias con cobertura (Quality Gate 90 %)
+        run: npx jest --coverage --coverageThreshold='{"global":{"statements":90,"branches":90,"functions":90,"lines":90}}'
+      - name: Compilar backend
+        run: npm run build
+
+  frontend:
+    name: Frontend (Next.js) - lint, pruebas RTL y Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      # El lint del template trae avisos heredados: se reporta pero no bloquea.
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+      # Quality Gate basico: vitest.config.ts exige un minimo de cobertura; si baja, falla.
+      - name: Pruebas de componentes (Vitest + RTL) con cobertura
+        run: npm run test:cov
+      - name: Compilar frontend
+        run: npm run build
+      - name: Guardar informe de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-frontend
+          path: coverage/

@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "e2e": "playwright test",
+    "e2e:informe": "playwright show-report"
   },
   "dependencies": {
     "@fullcalendar/react": "^7.1.0",
@@ -29,6 +33,7 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/forms": "^0.5.11",
     "@types/node": "^20.19.25",
