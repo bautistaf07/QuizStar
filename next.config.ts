@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   /* config options here */
+  allowedDevOrigins: ["*.loca.lt"],
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,

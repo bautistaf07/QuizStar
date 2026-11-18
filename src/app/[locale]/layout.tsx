@@ -10,6 +10,13 @@ import { notFound } from "next/navigation";
 import "simplebar-react/dist/simplebar.min.css";
 import "swiper/css/bundle";
 import "../globals.css";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "QuizStar | Plataforma de quices para instituciones educativas",
+  description:
+    "Plataforma de quices y evaluación para colegios y universidades.",
+};
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -36,7 +43,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={isRtl(locale as Locale) ? "rtl" : "ltr"}>
-      <body className={`${outfit.className} dark:bg-gray-900`}>
+      <body suppressHydrationWarning className={`${outfit.className} dark:bg-gray-900`}>
         <NextIntlClientProvider>
           <ThemeProvider>
             <SidebarProvider>{children}</SidebarProvider>

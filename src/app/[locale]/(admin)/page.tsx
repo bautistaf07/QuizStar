@@ -1,40 +1,37 @@
-import DemographicCard from "@/components/ecommerce/DemographicCard";
-import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
-import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import RecentOrders from "@/components/ecommerce/RecentOrders";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
-import type { Metadata } from "next";
+const metrics = [
+  { label: "Usuarios activos", value: "0" },
+  { label: "Quices creados", value: "0" },
+  { label: "Quices resueltos", value: "0" },
+  { label: "Participación", value: "0 %" },
+];
 
-export const metadata: Metadata = {
-  title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
-};
-
-export default function Ecommerce() {
+export default function Home() {
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-7">
-        <EcommerceMetrics />
-
-        <MonthlySalesChart />
+    <div>
+      <div className="mb-6">
+        <p className="text-sm font-medium text-brand-500">QuizStar</p>
+        <h1 className="text-2xl font-semibold text-gray-800
+                       dark:text-white/90">
+          Dashboard
+        </h1>
       </div>
 
-      <div className="col-span-12 xl:col-span-5">
-        <MonthlyTarget />
-      </div>
-
-      <div className="col-span-12">
-        <StatisticsChart />
-      </div>
-
-      <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
-      </div>
-
-      <div className="col-span-12 xl:col-span-7">
-        <RecentOrders />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((metric) => (
+          <div
+            key={metric.label}
+            className="rounded-2xl border border-gray-200 bg-white p-5
+                       dark:border-gray-800 dark:bg-white/[0.03]"
+          >
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {metric.label}
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-gray-800
+                          dark:text-white/90">
+              {metric.value}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
