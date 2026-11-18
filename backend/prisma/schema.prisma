@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  ADMIN
+  PROFESOR
+  ESTUDIANTE
+}
+
+enum EstadoIntento {
+  EN_CURSO
+  FINALIZADO
+  CERRADO_POR_TIEMPO
+}
+
+model Institucion {
+  id       String    @id @default(uuid())
+  nombre   String    @unique
+  creadoEn DateTime  @default(now())
+  usuarios Usuario[]
+  grupos   Grupo[]
+}
+
+model Usuario {
+  id             String      @id @default(uuid())
+  nombre         String
+  correo         String      @unique
+  passwordHash   String
+  rol            Rol
+  activo         Boolean     @default(true)
+  institucionId  String
+  institucion    Institucion @relation(fields: [institucionId], references: [id])
+  creadoEn       DateTime    @default(now())
+  gruposDictados Grupo[]     @relation("ProfesorGrupos")
+  matriculas     Matricula[]
+  intentos       Intento[]
+}
+
+model Grupo {
+  id            String       @id @default(uuid())
+  nombre        String
+  grado         String
+  institucionId String
+  institucion   Institucion  @relation(fields: [institucionId], references: [id])
+  profesorId    String?
+  profesor      Usuario?     @relation("ProfesorGrupos", fields: [profesorId], references: [id])
+  creadoEn      DateTime     @default(now())
+  matriculas    Matricula[]
+  asignaciones  Asignacion[]
+
+  @@unique([institucionId, nombre])
+}
+
+model Matricula {
+  id           String   @id @default(uuid())
+  grupoId      String
+  grupo        Grupo    @relation(fields: [grupoId], references: [id])
+  estudianteId String
+  estudiante   Usuario  @relation(fields: [estudianteId], references: [id])
+  creadoEn     DateTime @default(now())
+
+  @@unique([grupoId, estudianteId])
+}
+
+model Quiz {
+  id              String       @id @default(uuid())
+  titulo          String
+  tema            String
+  tiempoLimiteMin Int
+  profesorId      String
+  institucionId   String
+  creadoEn        DateTime     @default(now())
+  preguntas       Pregunta[]
+  asignaciones    Asignacion[]
+  intentos        Intento[]
+}
+
+model Pregunta {
+  id            String      @id @default(uuid())
+  quizId        String
+  quiz          Quiz        @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  enunciado     String
+  orden         Int
+  opciones      String[]
+  opcionCorrecta Int
+  respuestas    Respuesta[]
+}
+
+model Asignacion {
+  id       String   @id @default(uuid())
+  quizId   String
+  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  grupoId  String
+  grupo    Grupo    @relation(fields: [grupoId], references: [id])
+  creadoEn DateTime @default(now())
+
+  @@unique([quizId, grupoId])
+}
+
+model Intento {
+  id              String        @id @default(uuid())
+  quizId          String
+  quiz            Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  estudianteId    String
+  estudiante      Usuario       @relation(fields: [estudianteId], references: [id])
+  iniciadoEn      DateTime      @default(now())
+  finalizadoEn    DateTime?
+  estado          EstadoIntento @default(EN_CURSO)
+  correctas       Int?
+  calificacion    Float?
+  tiempoTotalSeg  Int?
+  respuestas      Respuesta[]
+
+  @@unique([quizId, estudianteId])
+}
+
+model Respuesta {
+  id         String   @id @default(uuid())
+  intentoId  String
+  intento    Intento  @relation(fields: [intentoId], references: [id], onDelete: Cascade)
+  preguntaId String
+  pregunta   Pregunta @relation(fields: [preguntaId], references: [id], onDelete: Cascade)
+  opcion     Int
+
+  @@unique([intentoId, preguntaId])
+}
