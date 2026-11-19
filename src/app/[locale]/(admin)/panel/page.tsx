@@ -2,6 +2,7 @@
 
 import { Banda } from "@/components/quizstar/ui";
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { Link } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
 import {
@@ -39,6 +40,7 @@ const ATAJOS: Record<Rol, { href: string; titulo: string; texto: string; color: 
 
 export default function Inicio() {
   const { usuario } = useAuth();
+  const { t } = useIdioma();
   const [datos, setDatos] = useState<Dato[]>([]);
 
   useEffect(() => {
@@ -90,10 +92,10 @@ export default function Inicio() {
   return (
     <>
       <Banda className="pb-24">
-        <p className="text-sm font-medium text-[#FFC933]">{ETIQUETA_ROL[usuario.rol]}</p>
-        <h1 className="mt-1 text-3xl font-extrabold sm:text-4xl">Hola, {nombre}</h1>
+        <p className="text-sm font-medium text-[#FFC933]">{t(ETIQUETA_ROL[usuario.rol])}</p>
+        <h1 className="mt-1 text-3xl font-extrabold sm:text-4xl">{t(`Hola, ${nombre}`)}</h1>
         <p className="mt-2 max-w-md text-sm text-white/80">
-          Esto es lo que tienes hoy en QuizStar. Elige una opción para empezar.
+          {t("Esto es lo que tienes hoy en QuizStar. Elige una opción para empezar.")}
         </p>
       </Banda>
 
@@ -102,7 +104,7 @@ export default function Inicio() {
         <div className="relative -mt-20 mb-8 grid gap-4 sm:grid-cols-3">
           {datos.map((d) => (
             <div key={d.etiqueta} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <p className="text-sm text-gray-500 dark:text-gray-400">{d.etiqueta}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t(d.etiqueta)}</p>
               <p className={`mt-1 text-4xl font-extrabold ${d.color}`}>{d.valor}</p>
             </div>
           ))}
@@ -110,7 +112,7 @@ export default function Inicio() {
       )}
 
       <h2 className={`relative mb-3 text-lg font-bold text-gray-800 dark:text-white/90 ${datos.length === 0 ? "-mt-12" : ""}`}>
-        ¿Qué quieres hacer?
+        {t("¿Qué quieres hacer?")}
       </h2>
       <div className="relative grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {ATAJOS[usuario.rol].map((a) => (
@@ -120,10 +122,10 @@ export default function Inicio() {
             className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
           >
             <span className={`mb-4 flex h-10 w-10 items-center justify-center rounded-lg text-base font-bold ${a.color} ${a.color.includes("FFC933") ? "text-[#1B1740]" : "text-white"}`}>
-              {a.titulo.charAt(0)}
+              {t(a.titulo).charAt(0)}
             </span>
-            <h3 className="font-bold text-gray-800 dark:text-white/90">{a.titulo}</h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{a.texto}</p>
+            <h3 className="font-bold text-gray-800 dark:text-white/90">{t(a.titulo)}</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t(a.texto)}</p>
           </Link>
         ))}
       </div>

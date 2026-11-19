@@ -1,6 +1,8 @@
 "use client";
 
+import SelectorIdioma from "@/components/common/SelectorIdioma";
 import { Boton, Campo, Mensaje } from "@/components/quizstar/ui";
+import { useIdioma } from "@/context/IdiomaContext";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api";
@@ -9,6 +11,7 @@ import { useState, type FormEvent } from "react";
 
 export default function SignInForm() {
   const { login } = useAuth();
+  const { t } = useIdioma();
   const router = useRouter();
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +39,8 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col lg:w-1/2">
+    <div className="relative flex w-full flex-1 flex-col lg:w-1/2">
+      <SelectorIdioma className="absolute right-4 top-4 text-gray-700 dark:text-gray-300" />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
         <div className="mb-8">
           <Image
@@ -54,10 +58,10 @@ export default function SignInForm() {
             className="mb-6 hidden dark:block"
           />
           <h1 className="mb-2 text-title-sm font-semibold text-gray-800 sm:text-title-md dark:text-white/90">
-            Iniciar sesión
+            {t("Iniciar sesión")}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Escribe tu correo y tu contraseña para entrar a QuizStar.
+            {t("Escribe tu correo y tu contraseña para entrar a QuizStar.")}
           </p>
         </div>
 

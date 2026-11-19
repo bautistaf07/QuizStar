@@ -1,6 +1,7 @@
 "use client";
 
 import { Boton, Campo, Mensaje, PageHeader, Tarjeta } from "@/components/quizstar/ui";
+import { useIdioma } from "@/context/IdiomaContext";
 import { useRouter } from "@/i18n/navigation";
 import { ApiError, apiFetch } from "@/lib/api";
 import { useState } from "react";
@@ -15,6 +16,7 @@ const preguntaVacia = (): PreguntaForm => ({ enunciado: "", opciones: ["", "", "
 
 export default function NuevoQuiz() {
   const router = useRouter();
+  const { t } = useIdioma();
   const [titulo, setTitulo] = useState("");
   const [tema, setTema] = useState("");
   const [tiempo, setTiempo] = useState("10");
@@ -73,7 +75,7 @@ export default function NuevoQuiz() {
                   </div>
                   <label className="mb-3 flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300">
                     <input type="radio" name={`correcta-${i}`} checked={p.opcionCorrecta === j} onChange={() => cambiar(i, { opcionCorrecta: j })} />
-                    Correcta
+                    {t("Correcta")}
                   </label>
                 </div>
               ))}

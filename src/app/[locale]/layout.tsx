@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/context/AuthContext";
+import { IdiomaProvider } from "@/context/IdiomaContext";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { isRtl } from "@/i18n/languages";
@@ -47,9 +48,11 @@ export default async function RootLayout({
       <body suppressHydrationWarning className={`${outfit.className} dark:bg-gray-900`}>
         <NextIntlClientProvider>
           <ThemeProvider>
-            <AuthProvider>
-              <SidebarProvider>{children}</SidebarProvider>
-            </AuthProvider>
+            <IdiomaProvider>
+              <AuthProvider>
+                <SidebarProvider>{children}</SidebarProvider>
+              </AuthProvider>
+            </IdiomaProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

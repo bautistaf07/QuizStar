@@ -2,7 +2,9 @@
 
 import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import UserDropdown from "@/components/header/UserDropdown";
+import SelectorIdioma from "@/components/common/SelectorIdioma";
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BoxCubeIcon, GridIcon, ListIcon, PageIcon, UserCircleIcon } from "@/icons";
 import Image from "next/image";
@@ -18,6 +20,7 @@ const ENLACES: { href: string; texto: string; icono: ReactNode; roles: string[] 
 
 export default function TopNav() {
   const { usuario } = useAuth();
+  const { t } = useIdioma();
   const ruta = usePathname();
   if (!usuario) return null;
 
@@ -42,7 +45,7 @@ export default function TopNav() {
               }`}
             >
               {e.icono}
-              {e.texto}
+              {t(e.texto)}
               {activo && <span className="absolute inset-x-3 bottom-0 h-1 rounded-t bg-[#FFC933]" />}
             </Link>
           </li>
@@ -63,9 +66,10 @@ export default function TopNav() {
         <div className="flex items-center gap-3">
           {botonCrear && (
             <Link href={botonCrear.href} className="hidden rounded-lg bg-white px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-25 sm:inline-flex">
-              {botonCrear.texto}
+              {t(botonCrear.texto)}
             </Link>
           )}
+          <SelectorIdioma className="text-white" />
           <ThemeToggleButton />
           <UserDropdown />
         </div>
