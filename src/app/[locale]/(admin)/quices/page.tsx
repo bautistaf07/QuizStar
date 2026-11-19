@@ -2,12 +2,14 @@
 
 import { Boton, Celda, Mensaje, PageHeader, TablaSimple, Tarjeta } from "@/components/quizstar/ui";
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { Link } from "@/i18n/navigation";
 import { ApiError, apiFetch } from "@/lib/api";
 import { ETIQUETA_ESTADO, type Grupo, type QuizEstudiante, type QuizProfesor } from "@/lib/tipos";
 import { useCallback, useEffect, useState } from "react";
 
 function VistaProfesor() {
+  const { t } = useIdioma();
   const [quices, setQuices] = useState<QuizProfesor[]>([]);
   const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [quizSel, setQuizSel] = useState("");
@@ -49,7 +51,7 @@ function VistaProfesor() {
       {exito && <Mensaje tipo="exito">{exito}</Mensaje>}
       <div className="mb-4">
         <Link href="/quices/nuevo" className="inline-flex rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600">
-          Crear quiz
+          {t("Crear quiz")}
         </Link>
       </div>
       <Tarjeta>
@@ -71,7 +73,7 @@ function VistaProfesor() {
                     Asignar
                   </Boton>
                   <Link href={`/quices/${q.id}/resultados`} className="inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-brand-500 ring-1 ring-inset ring-brand-300 hover:bg-brand-50">
-                    Resultados
+                    {t("Resultados")}
                   </Link>
                 </div>
               </Celda>
@@ -106,6 +108,7 @@ function VistaProfesor() {
 }
 
 function VistaEstudiante() {
+  const { t } = useIdioma();
   const [quices, setQuices] = useState<QuizEstudiante[]>([]);
   const [error, setError] = useState("");
 
@@ -130,12 +133,12 @@ function VistaEstudiante() {
               <Celda>{q.titulo}</Celda>
               <Celda>{q.tema}</Celda>
               <Celda>{q.tiempoLimiteMin}</Celda>
-              <Celda>{ETIQUETA_ESTADO[q.estadoIntento]}</Celda>
+              <Celda>{t(ETIQUETA_ESTADO[q.estadoIntento])}</Celda>
               <Celda>{q.calificacion ?? "-"}</Celda>
               <Celda>
                 {(q.estadoIntento === "SIN_INICIAR" || q.estadoIntento === "EN_CURSO") && (
                   <Link href={`/quices/${q.id}/presentar`} className="inline-flex rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600">
-                    {q.estadoIntento === "EN_CURSO" ? "Continuar" : "Presentar"}
+                    {t(q.estadoIntento === "EN_CURSO" ? "Continuar" : "Presentar")}
                   </Link>
                 )}
               </Celda>

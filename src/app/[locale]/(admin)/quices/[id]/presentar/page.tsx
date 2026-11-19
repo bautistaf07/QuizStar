@@ -1,6 +1,7 @@
 "use client";
 
 import { Boton, Mensaje, PageHeader, Tarjeta, formatearTiempo } from "@/components/quizstar/ui";
+import { useIdioma } from "@/context/IdiomaContext";
 import { Link } from "@/i18n/navigation";
 import { ApiError, apiFetch } from "@/lib/api";
 import type { QuizIniciado, ResultadoQuiz } from "@/lib/tipos";
@@ -9,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function PresentarQuiz() {
   const { id } = useParams<{ id: string }>();
+  const { t: tr } = useIdioma();
   const [quiz, setQuiz] = useState<QuizIniciado | null>(null);
   const [respuestas, setRespuestas] = useState<Record<string, number>>({});
   const [restante, setRestante] = useState(0);
@@ -90,17 +92,17 @@ export default function PresentarQuiz() {
             <Mensaje tipo="error">El tiempo terminó y el quiz se cerró automáticamente.</Mensaje>
           )}
           <p className="text-3xl font-semibold text-gray-800 dark:text-white/90">
-            Nota: {resultado.calificacion ?? "-"} / 100
+            {tr(`Nota: ${resultado.calificacion ?? "-"} / 100`)}
           </p>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Respuestas correctas: {resultado.correctas ?? 0} de {resultado.total}
+            {tr(`Respuestas correctas: ${resultado.correctas ?? 0} de ${resultado.total}`)}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Tiempo usado: {formatearTiempo(resultado.tiempoTotalSeg)}
+            {tr(`Tiempo usado: ${formatearTiempo(resultado.tiempoTotalSeg)}`)}
           </p>
           <div className="mt-5">
             <Link href="/quices" className="inline-flex rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600">
-              Volver a mis quices
+              {tr("Volver a mis quices")}
             </Link>
           </div>
         </Tarjeta>
@@ -113,18 +115,18 @@ export default function PresentarQuiz() {
       <>
         <PageHeader titulo="Presentar quiz" />
         <Mensaje tipo="error">{error}</Mensaje>
-        <Link href="/quices" className="text-brand-500 hover:underline">Volver a mis quices</Link>
+        <Link href="/quices" className="text-brand-500 hover:underline">{tr("Volver a mis quices")}</Link>
       </>
     );
   }
 
-  if (!quiz) return <p className="text-sm text-gray-500">Cargando quiz...</p>;
+  if (!quiz) return <p className="text-sm text-gray-500">{tr("Cargando quiz...")}</p>;
 
   return (
     <>
       <PageHeader titulo="Presentar quiz" />
       <div className="sticky top-20 z-10 mb-4 rounded-lg bg-brand-500 px-4 py-2 text-white" aria-live="off">
-        Tiempo restante: <strong>{formatearTiempo(Math.max(restante, 0))}</strong>
+        {tr("Tiempo restante:")} <strong>{formatearTiempo(Math.max(restante, 0))}</strong>
       </div>
       {error && <Mensaje tipo="error">{error}</Mensaje>}
       {quiz.preguntas.map((p, i) => (

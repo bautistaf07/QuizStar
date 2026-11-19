@@ -2,12 +2,14 @@
 
 import { Boton, Campo, Celda, Mensaje, PageHeader, TablaSimple, Tarjeta } from "@/components/quizstar/ui";
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { ApiError, apiFetch } from "@/lib/api";
 import type { Grupo, UsuarioLista } from "@/lib/tipos";
 import { useCallback, useEffect, useState } from "react";
 
 export default function GruposPagina() {
   const { usuario } = useAuth();
+  const { t } = useIdioma();
   const puedeGestionar = usuario?.rol === "ADMIN" || usuario?.rol === "PROFESOR";
   const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [estudiantes, setEstudiantes] = useState<UsuarioLista[]>([]);
@@ -110,7 +112,7 @@ export default function GruposPagina() {
       {puedeGestionar && grupoSel && (
         <Tarjeta titulo={`Matricular en: ${grupos.find((g) => g.id === grupoSel)?.nombre ?? ""}`}>
           {estudiantes.length === 0 ? (
-            <p className="text-sm text-gray-500">No hay estudiantes activos.</p>
+            <p className="text-sm text-gray-500">{t("No hay estudiantes activos.")}</p>
           ) : (
             <ul className="mb-4 space-y-2">
               {estudiantes.map((u) => (

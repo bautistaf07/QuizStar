@@ -1,6 +1,8 @@
 "use client";
 
+import SelectorIdioma from "@/components/common/SelectorIdioma";
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 
@@ -66,6 +68,7 @@ const PASOS = [
 
 export default function Landing() {
   const { usuario } = useAuth();
+  const { t } = useIdioma();
 
   return (
     <div className="min-h-screen overflow-hidden bg-white text-[#1B1740]">
@@ -75,17 +78,18 @@ export default function Landing() {
           <Image src="/images/logo/quizstar-logo-ancho-claro.svg" alt="QuizStar" width={150} height={34} priority className="h-9 w-auto" />
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
-          <a href="#como-funciona" className="hover:text-brand-500">Cómo funciona</a>
-          <a href="#roles" className="hover:text-brand-500">Para quién</a>
+          <a href="#como-funciona" className="hover:text-brand-500">{t("Cómo funciona")}</a>
+          <a href="#roles" className="hover:text-brand-500">{t("Para quién")}</a>
         </nav>
         <div className="flex items-center gap-3">
+          <SelectorIdioma />
           {usuario ? (
             <Link href="/panel" className="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-600">
-              Ir a mi panel
+              {t("Ir a mi panel")}
             </Link>
           ) : (
             <Link href="/signin" className="rounded-lg border border-[#1B1740] px-5 py-2 text-sm font-semibold hover:bg-[#1B1740] hover:text-white">
-              Iniciar sesión
+              {t("Iniciar sesión")}
             </Link>
           )}
         </div>
@@ -95,25 +99,25 @@ export default function Landing() {
       <section className="relative mx-auto grid max-w-6xl items-center gap-8 px-5 pb-16 pt-6 md:grid-cols-2 md:pt-12">
         <div className="pointer-events-none absolute -right-40 -top-24 hidden h-[620px] w-[620px] rounded-full bg-[#FFF6DB] md:block" />
         <div className="relative">
-          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-[#FF5A5F]">Evaluación para colegios y universidades</p>
+          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-[#FF5A5F]">{t("Evaluación para colegios y universidades")}</p>
           <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
-            Crea quices, <span className="relative inline-block text-brand-500">aprende
+            {t("Crea quices,")} <span className="relative inline-block text-brand-500">{t("aprende")}
               <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
                 <path d="M2 8 C50 2 120 2 198 7" stroke="#FF5A5F" strokeWidth="5" fill="none" strokeLinecap="round" />
               </svg>
             </span>{" "}
-            y compite en tu aula
+            {t("y compite en tu aula")}
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-[#475467]">
-            QuizStar le permite al profesor crear y asignar quices por grupo, y al estudiante presentarlos con tiempo límite, ver su nota y su puesto en el ranking.
+            {t("QuizStar le permite al profesor crear y asignar quices por grupo, y al estudiante presentarlos con tiempo límite, ver su nota y su puesto en el ranking.")}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-5">
             <Link href={usuario ? "/panel" : "/signin"} className="rounded-lg bg-[#FFC933] px-7 py-3.5 text-sm font-bold text-[#1B1740] shadow-lg shadow-[#FFC933]/40 hover:brightness-95">
-              {usuario ? "Ir a mi panel" : "Empezar ahora"}
+              {t(usuario ? "Ir a mi panel" : "Empezar ahora")}
             </Link>
             <a href="#como-funciona" className="flex items-center gap-3 text-sm font-semibold text-[#475467] hover:text-brand-500">
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 text-white" aria-hidden="true">▶</span>
-              Ver cómo funciona
+              {t("Ver cómo funciona")}
             </a>
           </div>
         </div>
@@ -124,14 +128,14 @@ export default function Landing() {
 
       {/* Cómo funciona */}
       <section id="como-funciona" className="mx-auto max-w-6xl px-5 py-16">
-        <p className="text-center text-sm font-bold uppercase tracking-wide text-[#FF5A5F]">Cómo funciona</p>
-        <h2 className="mt-2 text-center text-3xl font-extrabold">Tres pasos y listo</h2>
+        <p className="text-center text-sm font-bold uppercase tracking-wide text-[#FF5A5F]">{t("Cómo funciona")}</p>
+        <h2 className="mt-2 text-center text-3xl font-extrabold">{t("Tres pasos y listo")}</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {PASOS.map((p) => (
             <div key={p.n} className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
               <span className={`flex h-11 w-11 items-center justify-center rounded-xl text-lg font-bold text-white ${p.c}`}>{p.n}</span>
-              <h3 className="mt-5 text-lg font-bold">{p.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#475467]">{p.d}</p>
+              <h3 className="mt-5 text-lg font-bold">{t(p.t)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#475467]">{t(p.d)}</p>
             </div>
           ))}
         </div>
@@ -144,17 +148,17 @@ export default function Landing() {
             ["Administrador", "Crea los usuarios de su institución y controla quién tiene acceso."],
             ["Profesor", "Crea grupos, matricula estudiantes, arma quices y revisa resultados."],
             ["Estudiante", "Presenta sus quices a tiempo, ve su nota y su lugar en el ranking."],
-          ].map(([t, d]) => (
-            <div key={t} className="rounded-3xl bg-white p-7">
-              <h3 className="text-lg font-bold text-brand-500">{t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#475467]">{d}</p>
+          ].map(([rol, d]) => (
+            <div key={rol} className="rounded-3xl bg-white p-7">
+              <h3 className="text-lg font-bold text-brand-500">{t(rol)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#475467]">{t(d)}</p>
             </div>
           ))}
         </div>
       </section>
 
       <footer className="px-5 py-8 text-center text-sm text-[#667085]">
-        QuizStar · Proyecto de Calidad de Software · CORHUILA
+        {t("QuizStar · Proyecto de Calidad de Software · CORHUILA")}
       </footer>
     </div>
   );

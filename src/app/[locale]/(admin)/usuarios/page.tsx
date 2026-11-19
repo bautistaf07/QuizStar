@@ -2,12 +2,14 @@
 
 import { Boton, Campo, Celda, Mensaje, PageHeader, Seleccion, TablaSimple, Tarjeta } from "@/components/quizstar/ui";
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { ApiError, apiFetch } from "@/lib/api";
 import { ETIQUETA_ROL, type UsuarioLista } from "@/lib/tipos";
 import { useCallback, useEffect, useState } from "react";
 
 export default function UsuariosPagina() {
   const { usuario } = useAuth();
+  const { t } = useIdioma();
   const esAdmin = usuario?.rol === "ADMIN";
   const [lista, setLista] = useState<UsuarioLista[]>([]);
   const [error, setError] = useState("");
@@ -70,8 +72,8 @@ export default function UsuariosPagina() {
             <Campo id="correo" etiqueta="Correo" type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} required />
             <Campo id="password" etiqueta="Contraseña (mínimo 8 caracteres)" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <Seleccion id="rol" etiqueta="Rol" value={rol} onChange={(e) => setRol(e.target.value)}>
-              <option value="ESTUDIANTE">Estudiante</option>
-              <option value="PROFESOR">Profesor</option>
+              <option value="ESTUDIANTE">{t("Estudiante")}</option>
+              <option value="PROFESOR">{t("Profesor")}</option>
             </Seleccion>
             <div>
               <Boton type="submit">Crear usuario</Boton>
@@ -90,8 +92,8 @@ export default function UsuariosPagina() {
             <tr key={u.id}>
               <Celda>{u.nombre}</Celda>
               <Celda>{u.correo}</Celda>
-              <Celda>{ETIQUETA_ROL[u.rol]}</Celda>
-              {esAdmin && <Celda>{u.activo ? "Activo" : "Inactivo"}</Celda>}
+              <Celda>{t(ETIQUETA_ROL[u.rol])}</Celda>
+              {esAdmin && <Celda>{t(u.activo ? "Activo" : "Inactivo")}</Celda>}
               {esAdmin && (
                 <Celda>
                   {u.activo && u.rol !== "ADMIN" && (

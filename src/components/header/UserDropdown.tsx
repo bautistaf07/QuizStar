@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useIdioma } from "@/context/IdiomaContext";
 import { useRouter } from "@/i18n/navigation";
 import { ChevronDownIcon } from "@/icons";
 import { ETIQUETA_ROL } from "@/lib/tipos";
@@ -9,6 +10,7 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 
 export default function UserDropdown() {
   const { usuario, logout } = useAuth();
+  const { t } = useIdioma();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,7 +62,7 @@ export default function UserDropdown() {
             {usuario.correo}
           </span>
           <span className="mt-1 block text-theme-xs font-medium text-brand-500">
-            {ETIQUETA_ROL[usuario.rol]}
+            {t(ETIQUETA_ROL[usuario.rol])}
           </span>
         </div>
         <button
@@ -68,7 +70,7 @@ export default function UserDropdown() {
           onClick={cerrarSesion}
           className="mt-3 flex items-center justify-center rounded-lg border border-gray-200 px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/5"
         >
-          Cerrar sesión
+          {t("Cerrar sesión")}
         </button>
       </Dropdown>
     </div>

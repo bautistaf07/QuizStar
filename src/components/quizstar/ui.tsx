@@ -1,5 +1,6 @@
 "use client";
 
+import { useIdioma } from "@/context/IdiomaContext";
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from "react";
 
 /** Piezas reutilizables de QuizStar (mismo estilo de la plantilla: tarjetas, campos y botones). */
@@ -17,20 +18,22 @@ export function Banda({ children, className = "" }: { children: ReactNode; class
 }
 
 export function PageHeader({ titulo, subtitulo }: { titulo: string; subtitulo?: string }) {
+  const { t } = useIdioma();
   return (
     <Banda>
       <p className="text-sm font-medium text-[#FFC933]">QuizStar</p>
-      <h1 className="text-3xl font-extrabold">{titulo}</h1>
-      {subtitulo && <p className="mt-1 text-sm text-white/80">{subtitulo}</p>}
+      <h1 className="text-3xl font-extrabold">{t(titulo)}</h1>
+      {subtitulo && <p className="mt-1 text-sm text-white/80">{t(subtitulo)}</p>}
     </Banda>
   );
 }
 
 export function Tarjeta({ titulo, children }: { titulo?: string; children: ReactNode }) {
+  const { t } = useIdioma();
   return (
     <div className="relative mb-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
       {titulo && (
-        <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">{titulo}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">{t(titulo)}</h2>
       )}
       {children}
     </div>
@@ -38,13 +41,14 @@ export function Tarjeta({ titulo, children }: { titulo?: string; children: React
 }
 
 export function Mensaje({ tipo, children }: { tipo: "error" | "exito"; children: ReactNode }) {
+  const { t } = useIdioma();
   const estilos =
     tipo === "error"
       ? "border-error-200 bg-error-50 text-error-700 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400"
       : "border-success-200 bg-success-50 text-success-700 dark:border-success-500/30 dark:bg-success-500/10 dark:text-success-400";
   return (
     <div role={tipo === "error" ? "alert" : "status"} className={`relative mb-4 rounded-lg border p-3 text-sm ${estilos}`}>
-      {children}
+      {typeof children === "string" ? t(children) : children}
     </div>
   );
 }
@@ -55,14 +59,16 @@ const CLASE_CAMPO =
 export function Campo({
   etiqueta,
   id,
+  placeholder,
   ...props
 }: { etiqueta: string; id: string } & InputHTMLAttributes<HTMLInputElement>) {
+  const { t } = useIdioma();
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-        {etiqueta}
+        {t(etiqueta)}
       </label>
-      <input id={id} className={CLASE_CAMPO} {...props} />
+      <input id={id} className={CLASE_CAMPO} placeholder={placeholder ? t(placeholder) : undefined} {...props} />
     </div>
   );
 }
@@ -73,10 +79,11 @@ export function Seleccion({
   children,
   ...props
 }: { etiqueta: string; id: string; children: ReactNode } & SelectHTMLAttributes<HTMLSelectElement>) {
+  const { t } = useIdioma();
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-        {etiqueta}
+        {t(etiqueta)}
       </label>
       <select id={id} className={CLASE_CAMPO} {...props}>
         {children}
@@ -88,8 +95,10 @@ export function Seleccion({
 export function Boton({
   variante = "primario",
   className = "",
+  children,
   ...props
 }: { variante?: "primario" | "contorno" | "peligro" } & ButtonHTMLAttributes<HTMLButtonElement>) {
+  const { t } = useIdioma();
   const estilos = {
     primario: "bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300",
     contorno:
@@ -101,7 +110,9 @@ export function Boton({
       type="button"
       className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${estilos} ${className}`}
       {...props}
-    />
+    >
+      {typeof children === "string" ? t(children) : children}
+    </button>
   );
 }
 
@@ -116,8 +127,9 @@ export function TablaSimple({
   vacio: string;
   hayFilas: boolean;
 }) {
+  const { t } = useIdioma();
   if (!hayFilas) {
-    return <p className="text-sm text-gray-500 dark:text-gray-400">{vacio}</p>;
+    return <p className="text-sm text-gray-500 dark:text-gray-400">{t(vacio)}</p>;
   }
   return (
     <div className="overflow-x-auto">
@@ -126,7 +138,7 @@ export function TablaSimple({
           <tr className="border-b border-gray-200 text-start dark:border-gray-800">
             {columnas.map((c) => (
               <th key={c} className="px-3 py-2 text-start font-medium text-gray-500 dark:text-gray-400">
-                {c}
+                {t(c)}
               </th>
             ))}
           </tr>

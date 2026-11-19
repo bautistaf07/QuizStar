@@ -1,6 +1,7 @@
 "use client";
 
 import { Celda, Mensaje, PageHeader, TablaSimple, Tarjeta, formatearTiempo } from "@/components/quizstar/ui";
+import { useIdioma } from "@/context/IdiomaContext";
 import { ApiError, apiFetch } from "@/lib/api";
 import { ETIQUETA_ESTADO, type ResultadoProfesor } from "@/lib/tipos";
 import { useParams } from "next/navigation";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 
 export default function ResultadosQuiz() {
   const { id } = useParams<{ id: string }>();
+  const { t } = useIdioma();
   const [filas, setFilas] = useState<ResultadoProfesor[]>([]);
   const [error, setError] = useState("");
 
@@ -30,7 +32,7 @@ export default function ResultadosQuiz() {
           {filas.map((f) => (
             <tr key={f.estudianteId}>
               <Celda>{f.nombre}</Celda>
-              <Celda>{ETIQUETA_ESTADO[f.estado]}</Celda>
+              <Celda>{t(ETIQUETA_ESTADO[f.estado])}</Celda>
               <Celda>{f.correctas ?? "-"}</Celda>
               <Celda>{f.calificacion ?? "-"}</Celda>
               <Celda>{formatearTiempo(f.tiempoTotalSeg)}</Celda>
